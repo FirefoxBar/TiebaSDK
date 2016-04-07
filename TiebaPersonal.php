@@ -12,7 +12,7 @@
 
 class TiebaPersonal {
 	/**
-	 * 获取我喜欢的贴吧
+	 * 获取我喜欢的贴吧，最高支持200个
 	 * @access public
 	 * @param string $BDUSS
 	 * @return array
@@ -27,13 +27,53 @@ class TiebaPersonal {
 			'from' => 'tieba',
 			'net_type' => TiebaCommon::getClient('net_type')
 		];
-		$data['sign'] = TiebaCommon::clientSign($sign);
+		$data['sign'] = TiebaCommon::clientSign($data);
 		$url = TiebaCommon::createUrl('c/f/forum/like');
 		$info = json_decode(TiebaCommon::fetchUrl($url, ['post' => $data]), 1);
 		if (!$info) {
 			throw new TiebaException('Network error');
 		}
-		return $info;
+		return $info['forum_list'];
+	}
+	/**
+	 * 获取我喜欢的贴吧，速度较慢，但无上限
+	 * @access public
+	 * @param string $BDUSS
+	 * @return array
+	 */
+	public static function getMyLikeSlow($BDUSS) {
+		$pn = 0;
+		$tblist = [];
+		do {
+			$pn++;
+			$url = TiebaCommon::createUrl('f/like/mylike?pn=' . $pn, '');
+			$result = TiebaCommon::fetchUrl($url, ['cookie' => 'BDUSS=' . $BDUSS]);
+			$pre_reg = '/<tr>(.*?)<\/tr>/is';
+			$result = iconv('GBK', 'UTF-8', $result);
+			preg_match_all($pre_reg, $result, $matches);
+			//匹配结果会包含th
+			$onepagenum = count($matches[0]);
+			for ($i = 1; $i < $onepagenum; $i++) {
+				//解析
+				preg_match('/balvid="(\d+)" balvname="(.*?)"/is', $matches[0][$i], $r);
+				$id = $r[1];
+				$name = iconv('GBK', 'UTF-8', urldecode($r[2]));
+				preg_match('/class="like_badge_title">(.*?)</is', $matches[0][$i], $r);
+				$level_name = $r[1];
+				preg_match('/class="like_badge_lv">(\d+)</is', $matches[0][$i], $r);
+				$level_id = $r[1];
+				preg_match('/class="cur_exp"(.*?)>(\d+)</is', $matches[0][$i], $r);
+				$cur_score = $r[2];
+				$tblist[] = [
+					'id' => $id,
+					'name' => $name,
+					'level_id' => $level_id,
+					'level_name' => $level_name,
+					'cur_score' => $cur_score
+				];
+			}
+		} while ($onepagenum >= 2);
+		return $tblist;
 	}
 	/**
 	 * 签到
@@ -47,6 +87,9 @@ class TiebaPersonal {
 		if ($fid === NULL) {
 			$fid = TiebaForum::getFid($tieba);
 		}
+		echo $tieba;
+		echo "\n";
+		echo $fid;
 		$data = [
 			'BDUSS' => $BDUSS,
 			'_client_id' => TiebaCommon::getClient('_client_id'),
@@ -60,8 +103,8 @@ class TiebaPersonal {
 		];
 		$data['sign'] = TiebaCommon::clientSign($data);
 		//请求
-		$r = json_decode(TiebaCommon::fetchUrl(TiebaCommon::createUrl('c/c/forum/sign'), ['post' => $post]), 1);
-		if (!$r) {
+		$re = json_decode(TiebaCommon::fetchUrl(TiebaCommon::createUrl('c/c/forum/sign'), ['post' => $data]), 1);
+		if (!$re) {
 			throw new TiebaException('Network error');
 		}
 		if ($re['user_info']) {

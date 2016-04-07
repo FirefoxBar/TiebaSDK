@@ -11,7 +11,7 @@
  */
 
 class TiebaCommon {
-	protected $client = [
+	protected static $client = [
 		'typeName' => 'Windows8',
 		'typeId' => 4,
 		'version' => '1.2.1.17',
@@ -20,7 +20,7 @@ class TiebaCommon {
 	/**
 	 * 进行CURL请求
 	 */
-	public static function fetchUrl($url, $data) {
+	public static function fetchUrl($url, $data = []) {
 		$ch = curl_init($url);
 		//header
 		if (!isset($data['UA'])) {
@@ -97,7 +97,7 @@ class TiebaCommon {
 			return $tbs[$k];
 		}
 		$url = self::createUrl('dc/common/tbs', '');
-		$tbs_result = json_decode(self::fetchUrl($url), 1);
+		$tbs_result = json_decode(self::fetchUrl($url, ['cookie' => 'BDUSS=' . $BDUSS]), 1);
 		if (!$tbs_result) {
 			throw new TiebaException('Network error');
 		}
