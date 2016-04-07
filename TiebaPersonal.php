@@ -87,9 +87,6 @@ class TiebaPersonal {
 		if ($fid === NULL) {
 			$fid = TiebaForum::getFid($tieba);
 		}
-		echo $tieba;
-		echo "\n";
-		echo $fid;
 		$data = [
 			'BDUSS' => $BDUSS,
 			'_client_id' => TiebaCommon::getClient('_client_id'),
