@@ -33,7 +33,7 @@ class TiebaPersonal {
 		if (!$info) {
 			throw new TiebaException('Network error');
 		}
-		return $info['forum_list'];
+		return (array)$info['forum_list'];
 	}
 	/**
 	 * 获取我喜欢的贴吧，速度较慢，但无上限
