@@ -121,7 +121,7 @@ class TiebaPersonal {
 					$reason = 'unknow';
 					break;
 			}
-			return [0, $reason, $re['error_msg']];
+			return [0, $reason, isset($re['error_msg']) ? $re['error_msg'] : $re['error']['usermsg']];
 		}
 	}
 }
