@@ -128,4 +128,12 @@ class TiebaCommon {
 		}
 		return (isset($client[$k]) ? $client[$k] : '');
 	}
+	/**
+	 * 获取14位的时间戳
+	 * @access public
+	 * @return string
+	 */
+	public static function getTimestamp() {
+		return substr(str_replace('.', '', microtime(TRUE)), 0, 14);
+	}
 }
