@@ -12,9 +12,9 @@
 
 class TiebaCommon {
 	protected static $client = [
-		'typeName' => 'Windows8',
-		'typeId' => 4,
-		'version' => '1.2.1.17',
+		'typeName' => 'Android',
+		'typeId' => 2,
+		'version' => '5.2.2',
 		'net_type' => 3
 	];
 	/**
@@ -24,7 +24,7 @@ class TiebaCommon {
 		$ch = curl_init($url);
 		//header
 		if (!isset($data['UA'])) {
-			$ua = 'bdtb for ' . self::$client['typeName'] . ' ' . self::$client['version'];
+			$ua = 'BaiduTieba for ' . self::$client['typeName'] . ' ' . self::$client['version'];
 		} else {
 			$ua = 'Firefox 39.0 Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0';
 		}
@@ -113,13 +113,9 @@ class TiebaCommon {
 	public static function getClient($k) {
 		static $client = NULL;
 		if ($client === NULL) {
-			$client_id = [];
-			for ($i=1; $i<=28; $i++) {
-				$client_id[] = strtoupper(self::randStr(2));
-			}
-			$client_id = implode('-', $client_id);
+			$randId = mt_rand(100, 999);
 			$client = [
-				'_client_id' => $client_id,
+				'_client_id' => 'wappc_' . time() . $randId . '_' . $randId,
 				'_client_type' => self::$client['typeId'],
 				'_client_version' => self::$client['version'],
 				'_phone_imei' => md5(self::randStr(6)),
