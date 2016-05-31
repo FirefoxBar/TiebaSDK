@@ -12,6 +12,53 @@
 
 class TiebaPersonal {
 	/**
+	 * 获取基本信息
+	 * @access public
+	 * @param string $BDUSS
+	 */
+	public static function getMyInfo($BDUSS) {
+		$data = [
+			'_client_id' => TiebaCommon::getClient('_client_id'),
+			'_client_type' => TiebaCommon::getClient('_client_type'),
+			'_client_version' => TiebaCommon::getClient('_client_version'),
+			'_phone_imei' => TiebaCommon::getClient('_phone_imei'),
+			'bdusstoken' => $BDUSS,
+			'from' => 'tieba',
+			'net_type' => TiebaCommon::getClient('net_type')
+		];
+		$data['sign'] = TiebaCommon::clientSign($data);
+		$url = TiebaCommon::createUrl('c/s/login');
+		$info = json_decode(TiebaCommon::fetchUrl($url, ['post' => $data]), 1);
+		//通过$info['anti']['tbs']可以得到tbs
+		return $info['user'];
+	}
+	/**
+	 * 获取详细信息
+	 * @access public
+	 * @param string $BDUSS
+	 */
+	public static function getMyDetail($BDUSS, $uid = NULL) {
+		if (NULL === $uid) {
+			$u = self::getMyInfo($BDUSS);
+			$uid = $u['id'];
+		}
+		$data = [
+			'BDUSS' => $BDUSS,
+			'_client_id' => TiebaCommon::getClient('_client_id'),
+			'_client_type' => TiebaCommon::getClient('_client_type'),
+			'_client_version' => TiebaCommon::getClient('_client_version'),
+			'_phone_imei' => TiebaCommon::getClient('_phone_imei'),
+			'from' => 'tieba',
+			'need_post_count' => 1,
+			'net_type' => TiebaCommon::getClient('net_type'),
+			'uid' => $uid
+		];
+		$data['sign'] = TiebaCommon::clientSign($data);
+		$url = TiebaCommon::createUrl('c/u/user/profile');
+		$info = json_decode(TiebaCommon::fetchUrl($url, ['post' => $data]), 1);
+		return $info;
+	}
+	/**
 	 * 获取我喜欢的贴吧，最高支持200个
 	 * @access public
 	 * @param string $BDUSS
