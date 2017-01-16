@@ -86,9 +86,11 @@ class TiebaPersonal {
 	 * 获取我喜欢的贴吧，速度较慢，但无上限
 	 * @access public
 	 * @param string $BDUSS
+	 * @param string $STOKEN
+	 * @param int $max 目标数量。0为无上限。最终结果会大于或等于此数字
 	 * @return array
 	 */
-	public static function getMyLikeSlow($BDUSS, $STOKEN) {
+	public static function getMyLikeSlow($BDUSS, $STOKEN, $max = 0) {
 		$pn = 0;
 		$tblist = [];
 		do {
@@ -119,7 +121,7 @@ class TiebaPersonal {
 					'cur_score' => $cur_score
 				];
 			}
-		} while ($onepagenum >= 2);
+		} while ($onepagenum >= 2 && !($max > 0 && count($tblist) >= $max));
 		return $tblist;
 	}
 	/**
