@@ -153,24 +153,37 @@ class TiebaPersonal {
 		if (!$re) {
 			throw new TiebaException('Network error');
 		}
-		if ($re['user_info']) {
+		if (isset($re['user_info'])) {
 			return [1, $re['user_info']['sign_bonus_point']];
 		} else {
 			switch($re['error_code']){
-				case '160002': //已经签过
-					$reason = 'signed';
+				case '0': //百度大姨妈
+					$reason = 'server_unknow';
 					break;
 				case '1': //未登录
 					$reason = 'wrong_cookie';
 					break;
+				case '160002': //已经签过
+					$reason = 'signed';
+					break;
 				case '340006': //贴吧出现问题
 					$reason = 'tieba_blocked';
+					break;
+				case '340011': //签到过快
+					$reason = 'too_fast';
 					break;
 				default:
 					$reason = 'unknow';
 					break;
 			}
-			return [0, $reason, isset($re['error_msg']) ? $re['error_msg'] : $re['error']['usermsg']];
+			if (isset($re['error_msg'])) {
+				$error = $re['error_msg'];
+			} elseif (isset($re['error']['usermsg'])) {
+				$error = $re['error']['usermsg'];
+			} else {
+				$error = '无错误信息';
+			}
+			return [0, $reason, $error];
 		}
 	}
 }
