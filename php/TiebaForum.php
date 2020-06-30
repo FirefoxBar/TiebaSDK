@@ -117,4 +117,29 @@ class TiebaForum {
 		}
 		return $info;
 	}
+	/**
+	 * 获取楼中楼
+	 * @access public
+	 * @param int $kz 贴子ID
+	 * @param int $page 页码，当倒序时此参数无效
+	 * @return array
+	 */
+	public static function getFloor($pid, $page = 1) {
+		$data = [
+			'_client_id' => TiebaCommon::getClient('_client_id'),
+			'_client_type' => TiebaCommon::getClient('_client_type'),
+			'_client_version' => TiebaCommon::getClient('_client_version'),
+			'_phone_imei' => TiebaCommon::getClient('_phone_imei'),
+			'pid' => $pid,
+			'pn' => $page,
+			'timestamp' => TiebaCommon::getTimestamp()
+		];
+		$data['sign'] = TiebaCommon::clientSign($data);
+		$url = TiebaCommon::createUrl('c/f/pb/floor');
+		$info = json_decode(TiebaCommon::fetchUrl($url, ['post' => $data]), 1);
+		if (!$info) {
+			throw new TiebaException('Network error');
+		}
+		return $info;
+	}
 }
