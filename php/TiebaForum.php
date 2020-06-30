@@ -121,15 +121,17 @@ class TiebaForum {
 	 * 获取楼中楼
 	 * @access public
 	 * @param int $kz 贴子ID
-	 * @param int $page 页码，当倒序时此参数无效
+	 * @param int $pid 楼层ID
+	 * @param int $page 页码
 	 * @return array
 	 */
-	public static function getFloor($pid, $page = 1) {
+	public static function getFloor($kz, $pid, $page = 1) {
 		$data = [
 			'_client_id' => TiebaCommon::getClient('_client_id'),
 			'_client_type' => TiebaCommon::getClient('_client_type'),
 			'_client_version' => TiebaCommon::getClient('_client_version'),
 			'_phone_imei' => TiebaCommon::getClient('_phone_imei'),
+			'kz' => $kz,
 			'pid' => $pid,
 			'pn' => $page,
 			'timestamp' => TiebaCommon::getTimestamp()

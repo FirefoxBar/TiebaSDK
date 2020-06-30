@@ -23,7 +23,7 @@ class TiebaCommon {
 	public static function fetchUrl($url, $data = []) {
 		$ch = curl_init($url);
 		//header
-		if (!isset($data['UA'])) {
+		if (!isset($data['browser'])) {
 			$ua = 'BaiduTieba for ' . self::$client['typeName'] . ' ' . self::$client['version'];
 		} else {
 			$ua = 'Firefox 39.0 Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0';
@@ -87,13 +87,13 @@ class TiebaCommon {
 	 * 获取tbs
 	 * @access public
 	 * @param string $BDUSS BDUSS
-	 * @param boolean $focus_refresh 是否强制刷新
+	 * @param boolean $force_refresh 是否强制刷新
 	 * @return string
 	 */
-	public static function getTbs($BDUSS, $focus_refresh = FALSE) {
+	public static function getTbs($BDUSS, $force_refresh = FALSE) {
 		static $tbs = [];
 		$k = md5($BDUSS);
-		if (isset($tbs[$k]) && !$focus_refresh) {
+		if (isset($tbs[$k]) && !$force_refresh) {
 			return $tbs[$k];
 		}
 		$url = self::createUrl('dc/common/tbs', '');

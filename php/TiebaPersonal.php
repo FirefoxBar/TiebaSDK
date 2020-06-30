@@ -96,7 +96,7 @@ class TiebaPersonal {
 		do {
 			$pn++;
 			$url = TiebaCommon::createUrl('f/like/mylike?pn=' . $pn, '');
-			$result = TiebaCommon::fetchUrl($url, ['UA' => 'browser', 'cookie' => 'BDUSS=' . $BDUSS . '; STOKEN=' . $STOKEN]);
+			$result = TiebaCommon::fetchUrl($url, ['browser' => true, 'cookie' => 'BDUSS=' . $BDUSS . '; STOKEN=' . $STOKEN]);
 			$pre_reg = '/<tr>(.*?)<\/tr>/is';
 			$result = iconv('GBK', 'UTF-8', $result);
 			preg_match_all($pre_reg, $result, $matches);
